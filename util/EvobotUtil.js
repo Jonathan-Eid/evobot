@@ -26,3 +26,6 @@ exports.MAX_PLAYLIST_SIZE = config ? config.MAX_PLAYLIST_SIZE : process.env.MAX_
 exports.PRUNING = config ? config.PRUNING : process.env.PRUNING;
 exports.STAY_TIME = config ? config.STAY_TIME : process.env.STAY_TIME;
 exports.DEFAULT_VOLUME = config ? config.DEFAULT_VOLUME: process.env.DEFAULT_VOLUME;
+exports.CHANNEL_ID = config ? config.CHANNEL_ID: process.env.CHANNEL_ID;
+exports.TEXTCHANNEL_ID = config ? config.TEXTCHANNEL_ID: process.env.TEXTCHANNEL_ID;
+exports.PLAYLIST_URL = config ? config.PLAYLIST_URL: process.env.PLAYLIST_URL;

@@ -1,12 +1,13 @@
 /**
  * Module Imports
  */
-const { Client, Collection } = require("discord.js");
+const { Client, Collection, DiscordAPIError, Message } = require("discord.js");
 const { readdirSync } = require("fs");
 const { join } = require("path");
-const { TOKEN, PREFIX } = require("./util/EvobotUtil");
+const { TOKEN, PREFIX, CHANNEL_ID, TEXTCHANNEL_ID } = require("./util/EvobotUtil");
 
 const client = new Client({ disableMentions: "everyone" });
+const auto = require("./include/auto")
 
 client.login(TOKEN);
 client.commands = new Collection();
@@ -33,6 +34,47 @@ for (const file of commandFiles) {
   const command = require(join(__dirname, "commands", `${file}`));
   client.commands.set(command.name, command);
 }
+
+client.on("voiceStateUpdate", async (oldState, newState) => {
+
+  console.log("Old State: " + JSON.stringify(oldState));
+  console.log("New State: " + JSON.stringify(newState));
+  console.log("New Channel: " + JSON.stringify(newState.channel));
+
+  if(newState.id == TOKEN){return ;}
+
+  if(oldState.channelID == CHANNEL_ID && (newState.channelID != CHANNEL_ID || newState.channel == null)){
+    let channel = oldState.channel
+    let members = channel.members
+    console.log("MEMBERS SIZE: " + members.size);
+    let foundBot = members.find(user => {
+      console.log(user.user.id);
+      return (user.user.id == client.user.id)
+    })
+    if(members.size == 1 && foundBot){
+      channel.leave();
+    }
+
+  }
+
+  if(newState.channelID == CHANNEL_ID){
+    let channel = newState.channel
+    let members = channel.members
+    console.log("CLIENT ID: " + JSON.stringify(    client.user.id))
+
+    console.log("Members: " + JSON.stringify(members))
+    let foundBot = members.find(user => {
+      console.log(user.user.id);
+      return (user.user.id == client.user.id)
+    })
+    if (!foundBot){
+      auto.execute(channel)
+
+    }
+
+  }
+
+})
 
 client.on("message", async (message) => {
   if (message.author.bot) return;
